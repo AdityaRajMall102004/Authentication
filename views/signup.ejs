@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Signup</title>
+  <link rel="stylesheet" href="/css/signup.css">
+</head>  
+<body>
+  <section>
+    <div class="form-box">
+      <div class="form-value">
+        <form method="POST" action="/signup">
+          <h2>Sign Up</h2>
+          <% if (typeof error1 !== 'undefined' && error1) { %>
+            <div class="error-message"><%= error1 %></div>
+          <% } %>
+          
+          <% if (typeof error2 !== 'undefined' && error2) { %>
+            <div class="error-message"><%= error2 %></div>
+          <% } %>
+          
+
+          <div class="inputbox">
+            <input type="text" name="username" autocomplete="off" required>
+            <label>Email</label>
+          </div>
+
+          <div class="inputbox">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" name="password" id="password" autocomplete="new-password" required>
+            <label>Password</label>
+          </div>
+          <div class="forget">
+            <label for=""><a href="/forgot">Forget Password</a></label>
+        </div>
+          <button type="submit">Sign Up</button>
+          <div class="register">
+            <p>Already have an account? <a href="/login">Login</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Icons -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

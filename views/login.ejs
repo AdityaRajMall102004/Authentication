@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/css/login.css">
+  <title>Login</title>
+</head>
+<body>
+    <section>
+        <div class="form-box">
+            <div class="form-value">
+                <form method="POST" action="/login">
+                    <h2>Login</h2>
+                    <% if (typeof error3 !== 'undefined' && error3) { %>
+                        <div class="error-message"><%= error3 %></div>
+                      <% } %>
+                      
+                      <% if (typeof error4 !== 'undefined' && error4) { %>
+                        <div class="error-message"><%= error4 %></div>
+                      <% } %>
+                      
+                    <div class="inputbox">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input type="text" name="username" autocomplete="off" required>
+                        <label for="">Email</label>
+                    </div>
+                    <div class="inputbox">
+                        <!-- <ion-icon name="lock-closed-outline"></ion-icon> -->
+                        <input type="password" name="password" id="password" autocomplete="new-password" required>
+                        <label for="">Password</label>
+                        <span class="eye-icon" onclick="togglePasswordVisibility()">
+                            👁️
+                        </span>
+                    </div>
+                    <div class="forget">
+                        <label for=""> <a href="/forgot">Forget Password</a></label>
+                    </div>
+                    <button>Log in</button>
+                    <div class="register">
+                        <p>Don't have a account / <a href="/signup">Register</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+         function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const passwordType = passwordField.type;
+
+            // Toggle password visibility
+            if (passwordType === 'password') {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>
