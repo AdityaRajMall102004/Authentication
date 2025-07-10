@@ -1,42 +1,42 @@
 const express = require('express');
-const fs = require('fs').promises; 
+const fs = require('fs').promises;
 const path = require('path');
 const bodyParser = require('body-parser');
-const cron = require('node-cron');//for session of deleting post
+const cron = require('node-cron');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-const MongoStore = require('connect-mongo'); 
+const MongoStore = require('connect-mongo');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const Internship = require('./models/Internship'); 
+const Internship = require('./models/Internship');
 const methodOverride = require('method-override');
 require('dotenv').config();
 
-const connectDB = require('./database'); // Path to your database.js
-const User = require('./models/User');   // Path to your User.js model
+const connectDB = require('./database');
+const User = require('./models/User');
 const app = express();
-const PORT = process.env.PORT || 3000; // Use environment variable for port
-const LOGIN_LOG_FILE = path.join(__dirname, 'login_log.txt'); // Keep for local logs
+const PORT = process.env.PORT || 3000;
+// Removed LOGIN_LOG_FILE as fs.appendFile is not suitable for Render's ephemeral filesystem.
+// const LOGIN_LOG_FILE = path.join(__dirname, 'login_log.txt');
 
-// --- Connect to MongoDB ---
 connectDB();
 
-// Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // Add this for parsing JSON request bodies too, if needed
+app.use(express.json());
 
-// --- Configure session store for MongoDB Atlas ---
-app.use(methodOverride('_method')); // <--- ADD THIS LINE. It looks for '_method' in query string or body.
+// --- CRITICAL FIX 1: Trust proxy for session cookies to work with Render's HTTPS ---
+app.set('trust proxy', 1); // Trust the first proxy in front of your app (Render's load balancer)
 
-// --- Configure session store for MongoDB Atlas ---
+app.use(methodOverride('_method'));
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
+        mongoUrl: process.env.MONGODB_URI, // <--- IMPORTANT: Ensure this matches your .env / Render env var
         collectionName: 'sessions',
         ttl: 14 * 24 * 60 * 60,
         autoRemove: 'interval',
@@ -44,27 +44,27 @@ app.use(session({
     }),
     cookie: {
         maxAge: 24 * 60 * 60 * 1000,
-        secure: process.env.NODE_ENV === 'production'
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Set secure: true ONLY in production (HTTPS)
+        sameSite: 'lax' // <--- CRITICAL FIX 2: Add sameSite to prevent cookie issues
     }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// --- Authentication Middleware ---
 async function isAuthenticated(req, res, next) {
-    if (req.session.userId) { // Check if userId is present in session
+    if (req.session && req.session.userId) { // Check if req.session exists and has userId
         try {
-            // Find user by ID stored in session. Select only necessary fields.
             const user = await User.findById(req.session.userId).select('username');
             if (user) {
                 req.user = {
-                    id: user._id, // Mongoose documents have _id as the primary key
+                    id: user._id,
                     username: user.username
                 };
-                next(); // User is authenticated, proceed
+                next();
             } else {
-                // User ID in session doesn't match a valid user in DB
-                req.session.destroy(() => { // Destroy session to log them out
+                console.log("User ID in session not found in DB. Destroying session.");
+                req.session.destroy(() => {
                     res.redirect('/login');
                 });
             }
@@ -75,17 +75,16 @@ async function isAuthenticated(req, res, next) {
             });
         }
     } else {
-        res.redirect('/login'); // Not authenticated, redirect to login
+        res.redirect('/login');
     }
 }
 
 
 cron.schedule('0 * * * *', async () => {
     const now = new Date();
-    console.log(`[Cron Job] Running daily check for expired internships at ${now.toLocaleString()}`);
+    console.log(`[Cron Job] Running check for expired internships at ${now.toLocaleString()}`);
 
     try {
-        // Find internships where the deadline is less than or equal to the current time
         const result = await Internship.deleteMany({
             deadline: { $lte: now }
         });
@@ -101,9 +100,6 @@ cron.schedule('0 * * * *', async () => {
 });
 
 
-
-// --- Routes ---
-
 app.get('/', (req, res) => res.redirect('/login'));
 
 app.get('/signup', (req, res) => {
@@ -117,28 +113,26 @@ app.post('/signup', async (req, res) => {
     if (!emailRegex.test(username)) {
       return res.render('signup', { error1: 'Invalid email format', error2: null });
     }
-    
+
     if (password.length < 6) {
         return res.render('signup', { error1: null, error2: 'Password must be at least 6 characters long' });
     }
 
     try {
-        // Mongoose pre-save hook on User model handles hashing automatically
         const newUser = new User({ username, password });
-        await newUser.save(); // This will trigger the pre('save') hook for hashing
+        await newUser.save();
 
         const now = new Date();
-        const logEntry = `${username} Signed up 1st time at ${now.toLocaleString()}\n`;
-        await fs.appendFile(LOGIN_LOG_FILE, logEntry);
+        // Logging directly to console for Render
+        console.log(`[Signup Log] ${username} Signed up at ${now.toLocaleString()}`);
 
         req.session.username = newUser.username;
-        req.session.userId = newUser._id; // Store MongoDB's _id in session
+        req.session.userId = newUser._id;
 
         res.redirect('/dashboard');
 
     } catch (error) {
         console.error('Error during signup:', error);
-        // MongoDB duplicate key error code is 11000
         if (error.code === 11000) {
             return res.render('signup', { error1: 'Email already exists.', error2: null });
         }
@@ -154,23 +148,23 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ username }); // Find user by username/email
+        const user = await User.findOne({ username });
 
         if (!user) {
             return res.render('login', { error3: 'Invalid Email', error4: null });
         }
 
-        const match = await user.comparePassword(password); // Use the instance method defined in model
+        const match = await user.comparePassword(password);
         if (!match) {
             return res.render('login', { error3: null, error4: 'Wrong password' });
         }
 
         req.session.username = user.username;
-        req.session.userId = user._id; // Store MongoDB's _id in session
+        req.session.userId = user._id;
 
         const now = new Date();
-        const logEntry = `${username} logged in at ${now.toLocaleString()}\n`;
-        await fs.appendFile(LOGIN_LOG_FILE, logEntry);
+        // Logging directly to console for Render
+        console.log(`[Login Log] ${username} logged in at ${now.toLocaleString()}`);
 
         res.redirect('/dashboard');
 
@@ -183,31 +177,24 @@ app.post('/login', async (req, res) => {
 
 app.get('/dashboard', isAuthenticated, async (req, res) => {
     try {
-        // Fetch all internship posts, sorted by newest first (createdAt: -1)
-        // Limit to 20 most recent posts. Adjust this number as needed.
-        // Populate 'postedBy' to get the 'username' from the User model
         const internships = await Internship.find({})
                                             .sort({ createdAt: -1 })
                                             .limit(20)
                                             .populate('postedBy', 'username');
 
-        // Pass the username from req.user and the fetched internships to the dashboard template
-        // Also check if there's a 'message' query parameter (e.g., from a successful post redirect)
         const successMessage = req.query.message || null;
-        const errorMessage = req.query.error || null; // In case you want to redirect with error
+        const errorMessage = req.query.error || null;
 
         res.render('dashboard', {
-            username: req.user.username, // Using 'username' as expected by dashboard.ejs
+            username: req.user.username,
             internships: internships,
             message: successMessage,
             error: errorMessage
         });
     } catch (error) {
-
         console.error('Error fetching internships for dashboard:', error);
-        // On error, still render dashboard but with an empty internship list and an error message
         res.status(500).render('dashboard', {
-            username: req.user.username,
+            username: req.user ? req.user.username : 'Guest',
             internships: [],
             message: null,
             error: 'Failed to load internships. Please try again.'
@@ -215,7 +202,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
-app.post('/logout', (req, res) => { // Modified for session destruction
+app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
@@ -240,28 +227,24 @@ app.post('/forgot', async (req, res) => {
             return res.render('forgot', { error: 'Email not found', message: null });
         }
 
-        
-        // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiry = Date.now() + 5 * 60 * 1000; // valid for 5 minutes
+        const expiry = Date.now() + 5 * 60 * 1000;
 
-        // Update user in MongoDB
         await User.updateOne(
-            { _id: user._id }, // Find by user ID
+            { _id: user._id },
             { otpToken: otp, otpExpires: expiry, allowReset: false }
         );
 
-        // Send OTP via Gmail
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.GMAIL_USER, // Use env variable
-                pass: process.env.GMAIL_PASS  // Use env variable (App Password)
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
             }
         });
 
         transporter.sendMail({
-            from: '"StudyCloud" <ad2421853@gmail.com>',
+            from: process.env.EMAIL_FROM || '"StudyCloud" <ad2421853@gmail.com>',
             to: user.username,
             subject: 'Your OTP to Reset Password',
             html: `<h3>Your OTP: <b>${otp}</b></h3><p>It is valid for 5 minutes.</p>`
@@ -290,10 +273,9 @@ app.post('/verify', async (req, res) => {
             return res.render('verify', { username, error: 'Invalid or expired OTP' });
         }
 
-        // Update user in MongoDB
         await User.updateOne(
             { _id: user._id },
-            { allowReset: true, otpToken: null, otpExpires: null } // Clear OTP fields
+            { allowReset: true, otpToken: null, otpExpires: null }
         );
 
         res.render('reset', { username, error: null, message: null });
@@ -321,11 +303,9 @@ app.post('/reset', async (req, res) => {
             return res.render('reset', { username, error: 'Password must be at least 6 characters.', message: null });
         }
 
-        // Assign new password to the Mongoose user object.
-        // The pre('save') hook in the User model will automatically hash this.
         user.password = password;
-        user.allowReset = false; // Reset the flag
-        await user.save(); // Save the updated user document
+        user.allowReset = false;
+        await user.save();
 
         res.render('reset', { username: null, error: null, message: '✅ Password successfully changed! You can now log in.' });
     } catch (error) {
@@ -335,52 +315,16 @@ app.post('/reset', async (req, res) => {
 });
 
 
-// app.js (Add these new routes, for example, after your /reset POST route)
-
-// --- NEW ROUTE: Display the simplified form to post an internship ---
 app.get('/post-internship', isAuthenticated, (req, res) => {
     res.render('post-internship', { error: null });
 });
 
-// --- NEW ROUTE: Handle simplified internship post submission ---
-// app.post('/post-internship', isAuthenticated, async (req, res) => {
-//     const { company, batch, link } = req.body;
-//     const postedBy = req.user.id;
-
-//     if (!company || !batch || !link) {
-//         return res.render('post-internship', { error: 'Company, Batch, and Link are all required fields.' });
-//     }
-
-//     try {
-//         const newInternship = new Internship({
-//             company: company.trim(),
-//             batch: batch.trim(),
-//             link: link.trim(),
-//             postedBy: postedBy
-//         });
-
-//         await newInternship.save();
-//         // Redirect back to dashboard with a success message
-//         res.redirect('/dashboard?message=Internship link posted successfully!');
-//     } catch (error) {
-//         console.error('Error posting internship link:', error);
-//         let errorMessage = 'Failed to post internship link. Please try again.';
-//         if (error.name === 'ValidationError') { // Mongoose validation error
-//             errorMessage = error.message;
-//         }
-//         res.status(500).render('post-internship', { error: errorMessage });
-//     }
-// });
-
-
-// Assuming you have this route already
 app.post('/post-internship', isAuthenticated, async (req, res) => {
     try {
-        const { company, batch, description, link, deadline } = req.body; // <--- ADD 'deadline' here
+        const { company, batch, description, link, deadline } = req.body;
 
-        // Basic validation for deadline
         if (!deadline || new Date(deadline) < new Date()) {
-            return res.redirect('/post-internship?error=Deadline cannot be in the past or empty.');
+            return res.redirect('/post-internship?error=' + encodeURIComponent('Deadline cannot be in the past or empty.'));
         }
 
         const newInternship = new Internship({
@@ -388,19 +332,16 @@ app.post('/post-internship', isAuthenticated, async (req, res) => {
             batch,
             description,
             link,
-            deadline: new Date(deadline), // <--- Save deadline as a Date object
+            deadline: new Date(deadline),
             postedBy: req.session.userId
         });
         await newInternship.save();
-        res.redirect('/dashboard?message=Internship posted successfully!');
+        res.redirect('/dashboard?message=' + encodeURIComponent('Internship posted successfully!'));
     } catch (error) {
         console.error('Error posting internship:', error);
-        res.redirect('/post-internship?error=Failed to post internship.');
+        res.redirect('/post-internship?error=' + encodeURIComponent('Failed to post internship.'));
     }
 });
-// --- NEW ROUTE: View a Single Internship Post in Detail ---
-// app.js (Corrected /internship/:id GET route)
-
 app.get('/internship/:id', isAuthenticated, async (req, res) => {
     try {
         const internship = await Internship.findById(req.params.id)
@@ -411,8 +352,8 @@ app.get('/internship/:id', isAuthenticated, async (req, res) => {
         }
         res.render('internship-detail', {
             internship: internship,
-            username: req.user.username, // Still pass username for general display
-            user: req.user // <-- CRUCIAL FIX: Pass the entire req.user object for ID comparison
+            username: req.user.username,
+            user: req.user
         });
     } catch (error) {
         console.error('Error fetching internship link detail:', error);
@@ -421,50 +362,51 @@ app.get('/internship/:id', isAuthenticated, async (req, res) => {
 });
 
 
-
-// --- NEW ROUTE: Handle Internship Deletion (DELETE) ---
 app.delete('/internship/:id', isAuthenticated, async (req, res) => {
     try {
         const internshipId = req.params.id;
-        const loggedInUserId = req.user.id; // From isAuthenticated middleware
+        const loggedInUserId = req.user.id;
 
-        // 1. Find the internship
         const internship = await Internship.findById(internshipId);
 
-        // 2. Check if internship exists
         if (!internship) {
             console.log(`Attempted to delete non-existent internship: ${internshipId}`);
-            return res.status(404).redirect('/dashboard?error=Internship not found.');
+            return res.status(404).redirect('/dashboard?error=' + encodeURIComponent('Internship not found.'));
         }
 
-        // 3. Authorization Check: Ensure the logged-in user is the poster of the internship
-        // Mongoose ObjectIds need to be converted to strings for proper comparison
         if (internship.postedBy.toString() !== loggedInUserId.toString()) {
             console.log(`Unauthorized deletion attempt by user ${loggedInUserId} on post ${internshipId}`);
-            return res.status(403).redirect('/dashboard?error=You are not authorized to delete this post.');
+            return res.status(403).redirect('/dashboard?error=' + encodeURIComponent('You are not authorized to delete this post.'));
         }
 
-        // 4. Delete the internship
         await Internship.findByIdAndDelete(internshipId);
         console.log(`Internship ${internshipId} deleted by user ${loggedInUserId}.`);
 
-        // Redirect back to dashboard with a success message
-        res.redirect('/dashboard?message=Internship post deleted successfully!');
+        res.redirect('/dashboard?message=' + encodeURIComponent('Internship post deleted successfully!'));
 
     } catch (error) {
         console.error('Error during internship deletion:', error);
-        // If the ID format is invalid, findByIdAndDelete might throw an error
         let errorMessage = 'Server error during deletion. Please try again.';
-        if (error.name === 'CastError') { // Mongoose CastError for invalid ObjectId format
+        if (error.name === 'CastError') {
             errorMessage = 'Invalid internship ID format.';
         }
         res.status(500).redirect(`/dashboard?error=${encodeURIComponent(errorMessage)}`);
     }
 });
 
-// ... rest of your app.js file (e.g., app.listen)
 
 app.listen(PORT, () => {
-    console.log(`✅ Server running at http://localhost:${PORT}`);
-    console.log(`Connected to MongoDB: ${process.env.MONGODB_URI ? process.env.MONGODB_URI.split('@')[1].split('/')[0] : 'Not Connected'}`);
+    console.log(`✅ Server running on port ${PORT}`);
+    if (process.env.MONGODB_URI) {
+        try {
+            const uriParts = new URL(process.env.MONGODB_URI);
+            const host = uriParts.hostname;
+            const dbName = uriParts.pathname ? uriParts.pathname.substring(1) : 'default';
+            console.log(`Connected to MongoDB: Host: ${host}, DB: ${dbName}`);
+        } catch (e) {
+            console.log(`Connected to MongoDB (URI details hidden)`);
+        }
+    } else {
+        console.log(`MongoDB URI not set in environment variables.`);
+    }
 });
