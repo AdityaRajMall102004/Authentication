@@ -203,7 +203,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
             error: errorMessage
         });
     } catch (error) {
-        
+
         console.error('Error fetching internships for dashboard:', error);
         // On error, still render dashboard but with an empty internship list and an error message
         res.status(500).render('dashboard', {
@@ -240,6 +240,7 @@ app.post('/forgot', async (req, res) => {
             return res.render('forgot', { error: 'Email not found', message: null });
         }
 
+        
         // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiry = Date.now() + 5 * 60 * 1000; // valid for 5 minutes
