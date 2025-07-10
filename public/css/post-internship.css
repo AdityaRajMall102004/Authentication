@@ -1,0 +1,212 @@
+:root {
+    /* Base / General */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    --transition-speed: 0.2s ease-in-out;
+    --border-radius-base: 6px; /* Slightly less rounded */
+    --box-shadow-subtle: rgba(0, 0, 0, 0.05); /* Very light shadow */
+    --box-shadow-medium: rgba(0, 0, 0, 0.1);
+    --gap-spacing: 1.25rem; /* Consistent spacing */
+
+    /* Light Theme Colors (Default - GitHub-like) */
+    --body-bg: #f6f8fa; /* Light gray background */
+    --text-color: #24292f; /* Dark text */
+    --secondary-text-color: #57606a; /* Medium gray for labels/hints */
+    --container-bg: #ffffff;
+    --card-bg: #ffffff; /* For input fields background */
+    --border-color: #d0d7de; /* Light border */
+    --focus-glow-color: rgba(36, 100, 201, 0.3); /* Blue focus glow */
+    --focus-border-color: #0969da; /* Blue border on focus */
+    
+    /* Buttons */
+    --button-primary-bg: #2da44e; /* GitHub green for primary */
+    --button-primary-text: #ffffff;
+    --button-primary-hover-bg: #2c974b;
+
+    --button-secondary-bg: #f6f8fa; /* Light gray secondary button */
+    --button-secondary-text: #24292f;
+    --button-secondary-border: #d0d7de;
+    --button-secondary-hover-bg: #eff2f5;
+
+    /* Messages */
+    --message-error-bg: #ffebe9; /* Light red */
+    --message-error-text: #cc0000; /* Dark red */
+    --message-error-border: #d73a49; /* Red border */
+}
+
+/* Dark Theme (GitHub Dark default) */
+body.dark-theme {
+    --body-bg: #0d1117;
+    --text-color: #c9d1d9;
+    --secondary-text-color: #8b949e;
+    --container-bg: #161b22;
+    --card-bg: #010409; /* Very dark for inputs */
+    --border-color: #30363d;
+    --focus-glow-color: rgba(56, 139, 253, 0.3);
+    --focus-border-color: #388bfd;
+    
+    --button-primary-bg: #238636;
+    --button-primary-hover-bg: #2ea043;
+
+    --button-secondary-bg: #21262d;
+    --button-secondary-text: #c9d1d9;
+    --button-secondary-border: #30363d;
+    --button-secondary-hover-bg: #30363d;
+
+    --message-error-bg: #630000;
+    --message-error-text: #f7766d;
+    --message-error-border: #f7766d;
+
+    --box-shadow-subtle: rgba(0, 0, 0, 0.2);
+    --box-shadow-medium: rgba(0, 0, 0, 0.3);
+}
+
+/* General Body & Layout */
+body {
+    font-family: var(--font-family);
+    background-color: var(--body-bg);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Form Container */
+.form-container {
+    background-color: var(--container-bg);
+    padding: 25px; /* Slightly less padding */
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 3px 10px var(--box-shadow-medium); /* Subtle shadow */
+    border: 1px solid var(--border-color); /* Added subtle border */
+    width: 100%;
+    max-width: 500px; /* Slightly narrower, common for GitHub */
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* Heading */
+h1 {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em; /* Slightly smaller, more functional */
+    font-weight: 600;
+    transition: color var(--transition-speed);
+}
+
+/* Form Group & Labels */
+.form-group {
+    margin-bottom: 15px; /* Standard spacing */
+}
+label {
+    display: block;
+    margin-bottom: 5px; /* Closer to input */
+    color: var(--secondary-text-color);
+    font-weight: 400; /* Lighter weight */
+    font-size: 0.875em; /* Smaller font size for labels */
+    transition: color var(--transition-speed);
+}
+
+/* Input Fields & Textarea */
+input[type="text"],
+input[type="url"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 10px 12px; /* Consistent, good padding */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 1em;
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    box-sizing: border-box;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 90px; /* Slightly less tall */
+}
+
+/* Focus states for inputs (GitHub-like glow) */
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--focus-border-color); /* Bright border on focus */
+    box-shadow: 0 0 0 3px var(--focus-glow-color); /* Characteristic glow */
+}
+
+/* Placeholder styles */
+input::placeholder,
+textarea::placeholder {
+    color: var(--secondary-text-color);
+    opacity: 0.6;
+}
+
+/* Submit Button */
+.form-button {
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    padding: 10px 20px; /* Standard button size */
+    border: 1px solid rgba(27, 31, 35, 0.1); /* Subtle dark border */
+    border-radius: var(--border-radius-base);
+    font-size: 1em;
+    font-weight: 500; /* Medium weight */
+    cursor: pointer;
+    width: 100%;
+    transition: background-color var(--transition-speed), transform 0.1s ease, box-shadow var(--transition-speed), border-color var(--transition-speed);
+    margin-top: 15px;
+    box-shadow: var(--box-shadow-subtle); /* Very light shadow */
+}
+.form-button:hover {
+    background-color: var(--button-primary-hover-bg);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15); /* Slightly more prominent on hover */
+}
+.form-button:active {
+    transform: translateY(1px); /* Slight press effect */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Reduced shadow on active */
+}
+
+/* Optional: Secondary button style if you add more buttons */
+/*
+.form-button.secondary {
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    border: 1px solid var(--button-secondary-border);
+}
+.form-button.secondary:hover {
+    background-color: var(--button-secondary-hover-bg);
+}
+*/
+
+/* Messages */
+.error-message {
+    background-color: var(--message-error-bg);
+    color: var(--message-error-text);
+    border: 1px solid var(--message-error-border);
+    padding: 10px 15px;
+    border-radius: var(--border-radius-base);
+    text-align: left; /* Error messages often left-aligned */
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* Back Link */
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--focus-border-color); /* Use a consistent blue for links */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+

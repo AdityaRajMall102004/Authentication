@@ -1,0 +1,55 @@
+<header class="main-header">
+    <div class="header-content">
+        <div class="header-left">
+            <a href="/dashboard" class="logo">
+                <i class="fas fa-cloud-sun"></i> StudyCloud
+            </a>
+            <span class="welcome-text">Hello, <%= username %>!</span>
+        </div>
+        <div class="header-right">
+            <a href="/post-internship" class="post-button-header">
+                <i class="fas fa-plus-circle"></i> Post New Link
+            </a>
+
+            <select id="theme-selector" class="theme-select">
+                <option value="light-theme">Light</option>
+                <option value="dark-theme">Dark</option>
+                <option value="blue-theme">Blue Crush</option>
+                <option value="green-theme">Green Forest</option>
+            </select>
+
+            <a href="/login" class="logout-button-header">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const body = document.body;
+        const themeSelector = document.getElementById('theme-selector');
+        const themeKey = 'selected-theme';
+
+        // Load saved theme
+        const currentTheme = localStorage.getItem(themeKey);
+        if (currentTheme) {
+            body.classList.add(currentTheme);
+            themeSelector.value = currentTheme;
+        } else {
+            // Default to light theme if no theme saved
+            body.classList.add('light-theme');
+            themeSelector.value = 'light-theme';
+        }
+
+        // Apply theme on selection change
+        themeSelector.addEventListener('change', (event) => {
+            // Remove all existing theme classes
+            body.classList.remove('light-theme', 'dark-theme', 'blue-theme', 'green-theme');
+            // Add the newly selected theme
+            body.classList.add(event.target.value);
+            // Save the selected theme to local storage
+            localStorage.setItem(themeKey, event.target.value);
+        });
+    });
+</script>

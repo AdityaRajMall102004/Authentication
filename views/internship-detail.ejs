@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= internship.company %> - Internship Details</title>
+    <link rel="stylesheet" href="/css/internship-detail.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const themeKey = 'selected-theme';
+            const currentTheme = localStorage.getItem(themeKey);
+
+            if (currentTheme) {
+                body.classList.add(currentTheme);
+            } else {
+                body.classList.add('light-theme'); // Default if no theme saved
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="detail-container">
+        <h1><%= internship.company %></h1>
+        <h2>Internship Details</h2>
+
+        <div class="detail-item">
+            <strong>Batch:</strong>
+            <p><%= internship.batch %></p>
+        </div>
+
+        <div class="detail-item">
+            <strong>Application Deadline:</strong>
+            <p><%= new Date(internship.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+        </div>
+
+        <div class="detail-item">
+            <strong>Description:</strong>
+            <p><%= internship.description %></p> <%# <-- Added Description field %>
+        </div>
+
+        <div class="detail-item">
+            <strong>Application Link:</strong>
+            <p><a href="<%= internship.link %>" target="_blank" rel="noopener noreferrer"><%= internship.link %></a></p>
+        </div>
+
+        <div class="link-buttons-container">
+            <a href="<%= internship.link %>" target="_blank" rel="noopener noreferrer" class="apply-button">Go to Link</a>
+
+            <%# Only show delete button if the logged-in user is the one who posted it %>
+            <% if (internship.postedBy && internship.postedBy._id.toString() === user.id.toString()) { %>
+                <form action="/internship/<%= internship._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this internship post?');">
+                    <button type="submit" class="delete-button">Delete Post</button>
+                </form>
+            <% } %>
+        </div>
+
+        <p class="posted-by">Posted by: <%= internship.postedBy ? internship.postedBy.username : 'Unknown User' %> on <%= new Date(internship.createdAt).toLocaleDateString() %></p>
+        
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

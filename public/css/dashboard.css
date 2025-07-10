@@ -1,0 +1,489 @@
+:root {
+    /* Base / General */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    --transition-speed: 0.2s ease-in-out;
+    --border-radius-base: 6px; /* Slightly less rounded */
+    --box-shadow-subtle: rgba(0, 0, 0, 0.05); /* Very light shadow */
+    --box-shadow-medium: rgba(0, 0, 0, 0.1);
+    --box-shadow-heavy: rgba(0, 0, 0, 0.3);
+    --gap-spacing: 1.25rem; /* Consistent spacing */
+
+    /* Light Theme Colors (Default - GitHub-like) */
+    --body-bg: #f6f8fa; /* Light gray background */
+    --text-color: #24292f; /* Dark text */
+    --secondary-text-color: #57606a; /* Medium gray for labels/hints */
+    --header-bg: #ffffff; /* White header */
+    --header-border-bottom: #d0d7de; /* Light border */
+    --container-bg: #ffffff; /* Main content background */
+    --card-bg: #ffffff; /* Card background */
+    --border-color: #d0d7de; /* General border color */
+    --logo-color: #0969da; /* GitHub blue for logo */
+    --focus-glow-color: rgba(36, 100, 201, 0.3); /* Blue focus glow */
+    --focus-border-color: #0969da; /* Blue border on focus */
+    
+    /* Buttons */
+    --button-primary-bg: #2da44e; /* GitHub green for primary */
+    --button-primary-text: #ffffff;
+    --button-primary-hover-bg: #2c974b;
+
+    --button-secondary-bg: #f6f8fa; /* Light gray secondary button */
+    --button-secondary-text: #24292f;
+    --button-secondary-border: #d0d7de;
+    --button-secondary-hover-bg: #eff2f5;
+
+    --button-danger-bg: #dc3545; /* Red danger button */
+    --button-danger-text: #ffffff;
+    --button-danger-hover-bg: #c82333;
+
+    /* Messages */
+    --message-success-bg: #dafbe1; /* Light green */
+    --message-success-text: #2da44e; /* Dark green */
+    --message-success-border: #2da44e;
+
+    --message-error-bg: #ffebe9; /* Light red */
+    --message-error-text: #cc0000; /* Dark red */
+    --message-error-border: #d73a49; /* Red border */
+}
+
+/* Dark Theme (GitHub Dark default) */
+body.dark-theme {
+    --body-bg: #0d1117;
+    --text-color: #c9d1d9;
+    --secondary-text-color: #8b949e;
+    --header-bg: #161b22;
+    --header-border-bottom: #30363d;
+    --container-bg: #161b22;
+    --card-bg: #010409; /* Very dark for cards */
+    --border-color: #30363d;
+    --logo-color: #388bfd;
+    --focus-glow-color: rgba(56, 139, 253, 0.3);
+    --focus-border-color: #388bfd;
+    
+    --button-primary-bg: #238636;
+    --button-primary-hover-bg: #2ea043;
+
+    --button-secondary-bg: #21262d;
+    --button-secondary-text: #c9d1d9;
+    --button-secondary-border: #30363d;
+    --button-secondary-hover-bg: #30363d;
+
+    --button-danger-bg: #c82333;
+    --button-danger-hover-bg: #b31d2b;
+
+    --message-success-bg: #1f4f2c;
+    --message-success-text: #a8dadc;
+    --message-success-border: #a8dadc;
+
+    --message-error-bg: #630000;
+    --message-error-text: #f7766d;
+    --message-error-border: #f7766d;
+
+    --box-shadow-subtle: rgba(0, 0, 0, 0.2);
+    --box-shadow-medium: rgba(0, 0, 0, 0.3);
+    --box-shadow-heavy: rgba(0, 0, 0, 0.5);
+}
+
+/* Blue Crush Theme (Adjusted for GitHub feel) */
+body.blue-theme {
+    --body-bg: #e0f2f7;
+    --text-color: #212121;
+    --secondary-text-color: #424242;
+    --header-bg: #01579b;
+    --header-border-bottom: #01417a;
+    --container-bg: #ffffff;
+    --card-bg: #f0f8ff;
+    --border-color: #b3e5fc;
+    --logo-color: #e3f2fd;
+    --focus-glow-color: rgba(2, 136, 209, 0.3);
+    --focus-border-color: #0288d1;
+
+    --button-primary-bg: #0288d1;
+    --button-primary-hover-bg: #01579b;
+
+    --button-success-bg: #4caf50;
+    --button-success-hover-bg: #388e3c;
+
+    --button-danger-bg: #f44336;
+    --button-danger-hover-bg: #d32f2f;
+    
+    --box-shadow-subtle: rgba(0, 0, 0, 0.08);
+    --box-shadow-medium: rgba(0, 0, 0, 0.12);
+    --box-shadow-heavy: rgba(0, 0, 0, 0.25);
+}
+
+/* Green Forest Theme (Adjusted for GitHub feel) */
+body.green-theme {
+    --body-bg: #e8f5e9;
+    --text-color: #2e7d32;
+    --secondary-text-color: #43a047;
+    --header-bg: #388e3c;
+    --header-border-bottom: #2e7d32;
+    --container-bg: #ffffff;
+    --card-bg: #f0f4c3;
+    --border-color: #c8e6c9;
+    --logo-color: #ffffff;
+    --focus-glow-color: rgba(102, 187, 106, 0.3);
+    --focus-border-color: #66bb6a;
+
+    --button-primary-bg: #66bb6a;
+    --button-primary-hover-bg: #43a047;
+
+    --button-success-bg: #4caf50;
+    --button-success-hover-bg: #388e3c;
+
+    --button-danger-bg: #ef5350;
+    --button-danger-hover-bg: #d32f2f;
+
+    --box-shadow-subtle: rgba(0, 0, 0, 0.07);
+    --box-shadow-medium: rgba(0, 0, 0, 0.1);
+    --box-shadow-heavy: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Global Body & Layout --- */
+body {
+    font-family: var(--font-family);
+    background-color: var(--body-bg);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    min-height: 100vh;
+}
+
+/* General Container (Main content wrapper) */
+.container {
+    max-width: 1000px; /* Slightly narrower to match GitHub's content width */
+    margin: 20px auto;
+    background-color: var(--container-bg);
+    padding: 25px; /* Consistent padding */
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 3px 10px var(--box-shadow-medium); /* Subtle shadow */
+    border: 1px solid var(--border-color); /* Subtle border */
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* --- Header Styles (from header.ejs - these are mostly for the partial itself) --- */
+.main-header {
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--header-border-bottom);
+    padding: 1rem 20px;
+    box-shadow: 0 2px 5px var(--box-shadow-subtle);
+    margin-bottom: 20px;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+    color: var(--text-color);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Max width for header content */
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: var(--gap-spacing);
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--logo-color);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+    white-space: nowrap;
+}
+.logo:hover {
+    opacity: 0.8;
+}
+
+.welcome-text {
+    font-size: 1.1em;
+    color: var(--secondary-text-color);
+    white-space: nowrap;
+    transition: color var(--transition-speed);
+}
+
+/* Header Buttons & Theme Select */
+.theme-select {
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--border-radius-base);
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
+    appearance: none; /* Removes default dropdown arrow */
+    /* Fixed SVG arrow color (black) to prevent EJS error */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C114.7L154.7%2C0.3c-2.9-2.9-7.7-2.9-10.6%2C0L5.4%2C114.7c-2.9%2C2.9-2.9%2C7.7%2C0%2C10.6l21.3%2C21.3c2.9%2C2.9%2C7.7%2C2.9%2C10.6%2C0l92.5-92.5v167.3c0%2C4.1%2C3.3%2C7.4%2C7.4%2C7.4h30.6c4.1%2C0%2C7.4-3.3%2C7.4-7.4V54.1l92.5%2C92.5c2.9%2C2.9%2C7.7%2C2.9%2C10.6%2C0l21.3-21.3C289.9%2C122.4%2C289.9%2C117.6%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%, 0 0;
+    background-size: 0.65em auto, 100%;
+    padding-right: 2.2em; /* Ensure space for the arrow */
+}
+.theme-select:focus {
+    outline: none;
+    border-color: var(--focus-border-color);
+    box-shadow: 0 0 0 3px var(--focus-glow-color);
+}
+
+.post-button-header, .logout-button-header {
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--border-radius-base);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color var(--transition-speed), transform 0.1s ease;
+    white-space: nowrap;
+    border: 1px solid rgba(27, 31, 35, 0.1); /* Subtle border for buttons */
+    box-shadow: var(--box-shadow-subtle);
+}
+
+.post-button-header {
+    background-color: var(--button-primary-bg); /* Use primary for post button */
+    color: var(--button-primary-text);
+}
+.post-button-header:hover {
+    background-color: var(--button-primary-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+.post-button-header:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button-header {
+    background-color: var(--button-danger-bg);
+    color: var(--button-danger-text);
+}
+.logout-button-header:hover {
+    background-color: var(--button-danger-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+.logout-button-header:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* General Messages (Success/Error) */
+.message-success {
+    background-color: var(--message-success-bg);
+    color: var(--message-success-text);
+    border: 1px solid var(--message-success-border);
+    padding: 12px;
+    border-radius: var(--border-radius-base);
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 500;
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.message-error {
+    background-color: var(--message-error-bg);
+    color: var(--message-error-text);
+    border: 1px solid var(--message-error-border);
+    padding: 12px;
+    border-radius: var(--border-radius-base);
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 500;
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* Internship Section */
+.internship-section {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 4px 10px var(--box-shadow-light);
+    border: 1px solid var(--border-color);
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+.internship-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+    transition: border-color var(--transition-speed);
+}
+
+.internship-header h2 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.8em; /* Slightly smaller for dashboard section header */
+    font-weight: 600;
+    transition: color var(--transition-speed);
+}
+
+.internship-header .post-button { /* Still hidden as button is in header */
+    display: none; 
+}
+
+.internship-list {
+    display: grid;
+    gap: var(--gap-spacing);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.internship-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 16px; /* Slightly less padding for a tighter card */
+    box-shadow: 0 1px 4px var(--box-shadow-subtle); /* Very subtle card shadow */
+    transition: transform 0.2s ease-in-out, background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px; /* Adjusted min-height */
+}
+.internship-card:hover {
+    transform: translateY(-4px); /* Subtle lift on hover */
+    box-shadow: 0 4px 10px var(--box-shadow-light); /* Slightly more prominent shadow on hover */
+}
+
+.internship-card h3 { /* Company Name */
+    margin-top: 0;
+    color: var(--text-color); /* Company name is primary text color */
+    font-size: 1.25em; /* Slightly smaller, more like a heading */
+    font-weight: 600;
+    margin-bottom: 8px; /* Closer to batch/deadline */
+    transition: color var(--transition-speed);
+}
+
+.internship-card p {
+    margin: 4px 0; /* Tighter spacing for details */
+    color: var(--secondary-text-color);
+    font-size: 0.9em; /* Slightly smaller font for details */
+    line-height: 1.4;
+    transition: color var(--transition-speed);
+}
+
+.internship-card .details {
+    font-weight: 500; /* Medium weight for details */
+    color: var(--text-color); /* Make details strong in both themes */
+}
+
+.internship-card .posted-by {
+    font-size: 0.8em; /* Smaller for meta info */
+    color: var(--secondary-text-color);
+    margin-top: auto;
+    text-align: right;
+    border-top: 1px solid var(--border-color); /* Solid border for separation */
+    padding-top: 10px;
+    transition: color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.internship-card .card-footer {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.internship-card .view-button {
+    display: inline-block;
+    background-color: var(--button-primary-bg); /* Use primary button style */
+    color: var(--button-primary-text);
+    padding: 8px 15px; /* Smaller padding for card button */
+    border-radius: var(--border-radius-base);
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color var(--transition-speed), transform 0.1s ease;
+    border: 1px solid rgba(27, 31, 35, 0.1); /* Subtle button border */
+    box-shadow: var(--box-shadow-subtle);
+}
+.internship-card .view-button:hover {
+    background-color: var(--button-primary-hover-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.internship-card .view-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.no-internships {
+    text-align: center;
+    color: var(--secondary-text-color);
+    padding: 40px;
+    font-style: italic;
+    font-size: 1.2em;
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius-base);
+    margin-top: 20px;
+    box-shadow: 0 2px 5px var(--box-shadow-light);
+    border: 1px solid var(--border-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem; /* Adjust gap for smaller screens */
+    }
+    .header-left, .header-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.8rem;
+    }
+    .welcome-text {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    .post-button-header, .logout-button-header, .theme-select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .main-header {
+        padding: 15px;
+    }
+    .container {
+        padding: 15px;
+    }
+    .internship-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    .internship-header h2 {
+        margin-bottom: 15px;
+        font-size: 1.6em; /* Slightly smaller heading */
+    }
+    .internship-card {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.5em;
+    }
+    .welcome-text {
+        font-size: 1em;
+    }
+    .post-button-header, .logout-button-header, .theme-select {
+        font-size: 0.9em;
+        padding: 0.5rem 1rem;
+    }
+    .container {
+        padding: 10px;
+    }
+    .internship-section {
+        padding: 15px;
+    }
+    .internship-card {
+        padding: 12px;
+    }
+}

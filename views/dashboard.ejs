@@ -1,13 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - StudyCloud</title>
+    <link rel="stylesheet" href="/css/dashboard.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h2>Welcome, <%= user_name %>!</h2>
-    <!-- ✅ Correct: POST logout form -->
-    <form action="/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
+    <%- include('partials/header', { username: username }) %>
+
+    <div class="container">
+        <% if (locals.message) { %>
+            <div class="message-success"><%= message %></div>
+        <% } %>
+        <% if (locals.error && !locals.internships) { %> <%# Only show general error if no internships loaded %>
+            <div class="message-error"><%= error %></div>
+        <% } %>
+
+        <div class="internship-section">
+            <div class="internship-header">
+                <h2>Public Internship Links</h2>
+                </div>
+
+            <% if (internships && internships.length > 0) { %>
+                <div class="internship-list">
+                    <% internships.forEach(internship => { %>
+                        <div class="internship-card">
+                            <div>
+                                <h3><%= internship.company %></h3>
+                                <p><span class="details">Batch:</span> <%= internship.batch %></p>
+                                <p><span class="details">Deadline:</span> <%= new Date(internship.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                                <p class="posted-by">Posted by: <%= internship.postedBy ? internship.postedBy.username : 'Unknown' %> on <%= new Date(internship.createdAt).toLocaleDateString() %></p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/internship/<%= internship._id %>" class="view-button">View Link</a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p class="no-internships">No internship links posted yet. Be the first!</p>
+            <% } %>
+        </div>
+    </div>
 </body>
 </html>

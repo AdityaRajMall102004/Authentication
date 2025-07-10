@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post New Internship</title>
+    <link rel="stylesheet" href="/css/post-internship.css"> 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const themeKey = 'selected-theme';
+            const currentTheme = localStorage.getItem(themeKey);
+
+            if (currentTheme) {
+                body.classList.add(currentTheme);
+            } else {
+                body.classList.add('light-theme'); // Default if no theme saved
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Post New Internship</h1>
+
+        <% if (locals.error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
+        <% if (locals.message) { %>
+            <div class="success-message"><%= message %></div>
+        <% } %>
+
+        <form action="/post-internship" method="POST">
+            <div class="form-group">
+                <label for="company">Company Name</label>
+                <input type="text" id="company" name="company" placeholder="e.g., GitHub, Google" required autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+                <label for="batch">Batch / Eligibility</label>
+                <input type="text" id="batch" name="batch" placeholder="e.g., 2025 Grad, Final Year B.Tech" required autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="8" placeholder="Detailed description of the internship, roles, responsibilities." required autocomplete="off"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="link">Internship Link (URL)</label>
+                <input type="url" id="link" name="link" placeholder="e.g., https://www.company.com/careers/internship" required autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+                <label for="deadline">Application Deadline</label>
+                <input type="date" id="deadline" name="deadline" required autocomplete="off">
+            </div>
+            
+            <button type="submit" class="form-button">Post Internship</button>
+        </form>
+        <a href="/dashboard" class="back-link">Back to Dashboard</a>
+    </div>
+</body>
+</html>
