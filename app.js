@@ -203,6 +203,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
             error: errorMessage
         });
     } catch (error) {
+        
         console.error('Error fetching internships for dashboard:', error);
         // On error, still render dashboard but with an empty internship list and an error message
         res.status(500).render('dashboard', {
