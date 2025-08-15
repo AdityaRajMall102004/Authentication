@@ -20,14 +20,16 @@
           
 
           <div class="inputbox">
+            <ion-icon name="mail-outline"></ion-icon>
             <input type="text" name="username" autocomplete="off" required>
             <label>Email</label>
           </div>
-
           <div class="inputbox">
-            <ion-icon name="lock-closed-outline"></ion-icon>
+            <!-- <ion-icon name="lock-closed-outline"></ion-icon> -->
             <input type="password" name="password" id="password" autocomplete="new-password" required>
             <label>Password</label>
+            <!-- The eye icon now uses an ion-icon for consistency -->
+            <ion-icon name="eye-outline" class="eye-icon" id="eye-icon" onclick="togglePasswordVisibility()"></ion-icon>
           </div>
           <div class="forget">
             <label for=""><a href="/forgot">Forget Password</a></label>
